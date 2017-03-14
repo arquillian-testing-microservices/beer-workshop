@@ -1,0 +1,42 @@
+= Arquillian Workshop
+
+== Tools Requirements
+
+SCM:: Git client
+JVM:: Java 8 is a must to run everything, not business code itself but some test libraries
+Docker:: Having Docker 1.12.X installed to run container tests and build images. It doesn't matter if Docker is with Docker-Machine or native linux. Using Docker 1.13 might work but there can be some limitations due https://github.com/docker-java/docker-java. Also Native Docker in Mac/Windows does not work because of bug in docker-java
+Kubernetes cluster:: This tool is optional but to run deployment tests it is worth to have it installed locally using minishift (https://github.com/minishift/minishift) or minikube(https://github.com/kubernetes/minikube). Minishift is used in workshop.
+Database:: A MongoDB database is required. 
+Forge:: Install latest Forge (http://forge.jboss.org/) tool. You can use the IDE plugin or the CLI. During workshop CLI is used
+IDE:: In workshop IntelliJ is used but any Java IDE is good.
+
+== Before Starting
+
+When having installed all software mentioned at <<Tools Requirements>> you need to execute next steps:
+
+=== Clone Beer Workshop Project
+
+[source, terminal]
+----
+> git clone git@github.com:arquillian-testing-microservices/beer-workshop.git
+----
+
+=== Install Forge addons
+
+Enter to Beer-Workshop directory and do next commands:
+
+[source, terminal]
+----
+> forge
+
+[beer-workshop]$ addon-install-from-git --url https://github.com/forge/as-addon  --coordinate org.jboss.forge.addon:as
+[beer-workshop]$ addon-install-from-git --url https://github.com/forge/jboss-as-addon  --coordinate org.jboss.forge.addon:jboss-as-wf
+----
+
+Then the day before the workshop install Arquillian Addon. We love to show the latest development so again being inside `forge` console run:
+
+[source, terminal]
+----
+[beer-workshop]$ addon-install-from-git --url https://github.com/forge/arquillian-addon.git
+----
+
