@@ -10,5 +10,8 @@
   </build>
   <modules>
     <module>jpa-beer-service</module>
+    <module>jpa-beer-service-2</module>
+    <module>mongodb-beer-service</module>
+    <module>mongodb-beer-service-docker</module>
   </modules>
 </project>

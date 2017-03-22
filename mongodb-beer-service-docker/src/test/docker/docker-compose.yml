@@ -1,0 +1,14 @@
+beer:
+  image: brewery/beer-service:1.0.0-SNAPSHOT
+  ports:
+      - "8080:8080"
+  links:
+    - mongodb:database
+  environment:
+    - MONGODB_HOSTNAME=database
+    - MONGODB_PORT=27017
+
+mongodb:
+  image: mongo:3.2.12
+  ports:
+    - "27017:27017"
