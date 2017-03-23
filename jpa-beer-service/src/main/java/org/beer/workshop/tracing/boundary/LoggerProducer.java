@@ -5,7 +5,7 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 import java.util.logging.Logger;
 
-//@ApplicationScoped
+@ApplicationScoped
 public class LoggerProducer {
 
     @Produces

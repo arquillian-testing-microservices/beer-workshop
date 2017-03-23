@@ -30,11 +30,11 @@ public class Beer implements Serializable {
 
     @Column
     @NotNull
-    private BigDecimal price;
+    private double price;
 
     @Column
     @NotNull
-    private BigDecimal alcohol;
+    private double alcohol;
 
     public Long getId() {
         return this.id;
@@ -85,19 +85,19 @@ public class Beer implements Serializable {
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
-    public BigDecimal getAlcohol() {
+    public double getAlcohol() {
         return alcohol;
     }
 
-    public void setAlcohol(BigDecimal alcohol) {
+    public void setAlcohol(double alcohol) {
         this.alcohol = alcohol;
     }
 
@@ -109,10 +109,8 @@ public class Beer implements Serializable {
         result += ", version: " + version;
         if (name != null && !name.trim().isEmpty())
             result += ", name: " + name;
-        if (price != null)
-            result += ", price: " + price;
-        if (alcohol != null)
-            result += ", alcohol: " + alcohol;
+        result += ", price: " + price;
+        result += ", alcohol: " + alcohol;
         return result;
     }
 }

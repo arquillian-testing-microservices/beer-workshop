@@ -50,3 +50,211 @@ Pull to your local Docker host next Docker images.
 > docker pull mongo:3.2.12
 > docker pull redis:3.2.8
 ----
+
+== Solution
+
+=== JPA Beer Service
+
+Go to root of the project and start `Forge`.
+
+Then being on `jpa-beer-service` directory execute next Forge command:
+
+[source, terminal]
+----
+[jpa-beer-service]$ arquillian-setup --test-framework junit --container-adapter wildfly-managed
+----
+
+After this command all dependencies are setup. Then let's switch to IDE and code first test.
+
+Open `pom.xml` of current exercise and register `asssertj` dependency.
+
+[source, xml]
+.jpa-beer-service/pom.xml
+----
+<dependency>
+  <groupId>org.assertj</groupId>
+  <artifactId>assertj-core</artifactId>
+  <version>3.6.0</version>
+  <scope>test</scope>
+</dependency>
+----
+
+Then we can create the test class in charge of validating that beers can be found:
+
+[source, java]
+.jpa-beer-service
+----
+package org.beer.workshop;
+
+import org.beer.workshop.boundary.Beers;
+import org.beer.workshop.entity.Beer;
+import org.beer.workshop.tracing.boundary.LoggerProducer;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.JavaArchive;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import javax.inject.Inject;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+@RunWith(Arquillian.class)
+public class BeersTest {
+
+    @Deployment
+    public static WebArchive createDeployment() {
+        WebArchive webArchive = ShrinkWrap.create(WebArchive.class)
+                .addClasses(Beers.class, Beer.class, LoggerProducer.class)
+                .addAsWebInfResource("persistence-test.xml", "classes/META-INF/persistence.xml")
+                .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
+                        .importTestDependencies().resolve().withTransitivity()
+                        .as(JavaArchive.class));
+
+        return webArchive;
+
+    }
+
+    @Inject
+    Beers beers;
+
+    @Test
+    public void should_final_all_beers() {
+
+        // Given:
+
+        Beer beer = new Beer();
+        beer.setName("Voll Damn");
+        beer.setPrice(1.5);
+        beer.setAlcohol(7.2);
+        beers.persist(beer);
+
+        // When:
+
+        final List<Beer> beers = this.beers.listAll(0, Integer.MAX_VALUE);
+
+        // Then:
+
+        assertThat(beers)
+                .hasSize(1)
+                .extracting(Beer::getName)
+                .contains("Voll Damn");
+
+    }
+
+}
+----
+
+Then you can run the test and see how `Wildfly` is downloaded and started, archive deployed, and test executed.
+
+=== JPA Beer Service 2
+
+Now let's write a test that is a black box test by using client approach:
+
+First of all let's add REST-Assured library on `pom.xml`:
+
+[source, xml]
+.jpa-beer-service-2/pom.xml
+----
+<dependency>
+  <groupId>io.rest-assured</groupId>
+  <artifactId>rest-assured</artifactId>
+  <version>3.0.2</version>
+  <scope>test</scope>
+</dependency>
+<dependency>
+  <groupId>com.google.code.gson</groupId>
+  <artifactId>gson</artifactId>
+  <version>2.5</version>
+  <scope>test</scope>
+</dependency>
+----
+
+And then modify `jpa-beer-service-2/src/test/java/org/beer/workshop/BeerEndpointTest.java` to look like:
+
+[source, java]
+.jpa-beer-service-2/src/test/java/org/beer/workshop/BeerEndpointTest.java
+----
+import io.restassured.RestAssured;
+import io.restassured.builder.RequestSpecBuilder;
+import io.restassured.http.ContentType;
+import org.beer.workshop.boundary.BeerEndpoint;
+import org.beer.workshop.entity.Beer;
+import org.beer.workshop.tracing.boundary.LoggerProducer;
+import org.hamcrest.CoreMatchers;
+import org.jboss.arquillian.container.test.api.Deployment;
+import org.jboss.arquillian.junit.Arquillian;
+import org.jboss.arquillian.test.api.ArquillianResource;
+import org.jboss.shrinkwrap.api.ShrinkWrap;
+import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+
+import java.net.URL;
+
+import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.hasItems;
+
+@RunWith(Arquillian.class)
+public class BeerEndpointTest {
+
+    @Deployment(testable = false)
+    public static WebArchive createDeploymentFile() {
+        WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war")
+                .addPackages(true, BeerEndpoint.class.getPackage())
+                .addClasses(Beer.class, LoggerProducer.class)
+                .addAsWebInfResource("persistence-test.xml", "classes/META-INF/persistence.xml");
+
+        return webArchive;
+
+    }
+
+    @ArquillianResource
+    URL serviceUrl;
+
+    @Test
+    public void should_find_all_beers() {
+
+        // Given:
+
+        RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder();
+        requestSpecBuilder.setBaseUri(serviceUrl.toExternalForm() + "rest/beers/");
+
+        createBeer(requestSpecBuilder);
+
+        // When: Then:
+
+        given()
+                .contentType(ContentType.JSON)
+                .spec(requestSpecBuilder.build())
+                .get()
+                .then()
+                .assertThat()
+                .body("name", hasItems("Voll Damn"));
+
+
+    }
+
+    private void createBeer(RequestSpecBuilder requestSpecBuilder) {
+        Beer beer = new Beer();
+        beer.setName("Voll Damn");
+        beer.setPrice(1.5);
+        beer.setAlcohol(7.2);
+
+        given()
+                .contentType(ContentType.JSON)
+                .spec(requestSpecBuilder.build())
+                .body(beer)
+                .post()
+                .then()
+                .assertThat()
+                .statusCode(201);
+    }
+
+}
+
+----
