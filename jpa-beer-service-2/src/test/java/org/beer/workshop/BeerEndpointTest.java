@@ -1,3 +1,5 @@
+package org.beer.workshop;
+
 import org.beer.workshop.boundary.BeerEndpoint;
 import org.beer.workshop.boundary.Beers;
 import org.beer.workshop.entity.Beer;

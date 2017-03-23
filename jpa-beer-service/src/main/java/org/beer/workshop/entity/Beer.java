@@ -1,15 +1,14 @@
 package org.beer.workshop.entity;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import java.io.Serializable;
-import javax.persistence.Id;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-import javax.persistence.Column;
+import javax.persistence.Id;
 import javax.persistence.Version;
-import java.math.BigDecimal;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.io.Serializable;
 
 @Entity
 @XmlRootElement
@@ -30,11 +29,11 @@ public class Beer implements Serializable {
 
     @Column
     @NotNull
-    private BigDecimal price;
+    private long price;
 
     @Column
     @NotNull
-    private BigDecimal alcohol;
+    private long alcohol;
 
     public Long getId() {
         return this.id;
@@ -85,19 +84,19 @@ public class Beer implements Serializable {
         this.name = name;
     }
 
-    public BigDecimal getPrice() {
+    public long getPrice() {
         return price;
     }
 
-    public void setPrice(BigDecimal price) {
+    public void setPrice(long price) {
         this.price = price;
     }
 
-    public BigDecimal getAlcohol() {
+    public long getAlcohol() {
         return alcohol;
     }
 
-    public void setAlcohol(BigDecimal alcohol) {
+    public void setAlcohol(long alcohol) {
         this.alcohol = alcohol;
     }
 
@@ -109,10 +108,8 @@ public class Beer implements Serializable {
         result += ", version: " + version;
         if (name != null && !name.trim().isEmpty())
             result += ", name: " + name;
-        if (price != null)
-            result += ", price: " + price;
-        if (alcohol != null)
-            result += ", alcohol: " + alcohol;
+        result += ", price: " + price;
+        result += ", alcohol: " + alcohol;
         return result;
     }
 }
