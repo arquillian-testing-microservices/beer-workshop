@@ -1,10 +1,8 @@
-import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import org.beer.workshop.boundary.BeerEndpoint;
 import org.beer.workshop.entity.Beer;
 import org.beer.workshop.tracing.boundary.LoggerProducer;
-import org.hamcrest.CoreMatchers;
 import org.jboss.arquillian.container.test.api.Deployment;
 import org.jboss.arquillian.junit.Arquillian;
 import org.jboss.arquillian.test.api.ArquillianResource;
