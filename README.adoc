@@ -177,7 +177,7 @@ First of all let's add REST-Assured library on `pom.xml`:
 And then modify `jpa-beer-service-2/src/test/java/org/beer/workshop/BeerEndpointTest.java` to look like:
 
 [source, java]
-.jpa-beer-service-2/src/test/java/org/beer/workshop/BeerEndpointTest.java
+.jpa-beer-service-2/src/test/java/org/beer/workshop/org.beer.workshop.BeerEndpointTest.java
 ----
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -200,7 +200,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.hasItems;
 
 @RunWith(Arquillian.class)
-public class BeerEndpointTest {
+public class org.beer.workshop.BeerEndpointTest {
 
     @Deployment(testable = false)
     public static WebArchive createDeploymentFile() {
@@ -258,3 +258,77 @@ public class BeerEndpointTest {
 }
 
 ----
+
+=== MongoDB Beer Service
+
+In this example we are going to see another way of writing previous test.
+To change a bit the logic, currently `MongoDB` database is used instead of JPA with `H2`.
+
+First thing before executing the test, just start `MongoDB` by calling `${MONGO_HOME}/bin/mongod` using default parameters is ok for given test.
+
+...
+
+Finally you can stop `MongoDB`.
+
+=== MongoDB Beer Service Docker
+
+In this case, the application is updated to use Docker.
+
+Prior to write any test you need to create the image of *Beer Service* by running next Maven command from project directory:
+
+[source, terminal]
+----
+> mvn clean package -DskipTests
+> mvn docker:build
+----
+
+After that, Docker image `brewery/beer-service:1.0.0-SNAPSHOT` is created.
+
+Then if you navigate to `src/test/docker` directory, you'll see the `docker-compose` that is defined to start `beer-service` Docker image linked to a MongoDB Docker image.
+
+First of all add next dependencies:
+
+[source, xml]
+.mongodb-beer-service-docker/pom.xml
+----
+<dependency>
+    <groupId>org.arquillian.universe</groupId>
+    <artifactId>arquillian-junit-standalone</artifactId>
+    <type>pom</type>
+    <scope>test</scope>
+    </dependency>
+<dependency>
+    <groupId>org.arquillian.universe</groupId>
+    <artifactId>arquillian-cube-docker</artifactId>
+    <type>pom</type>
+    <scope>test</scope>
+</dependency>
+----
+
+And remove:
+
+* `org.arquillian.universe:arquillian-junit`
+* `Default Maven Profile`
+* Container definition in `arquillian.xml`
+
+Finally open `org.beer.workshop.BeerEndpointTest`, removes `@Deployment` method and enrich test with Docker data.
+Test might look like:
+
+...
+
+
+Also there is a `BeerWarehouse` class that uses `Redis` key-value NoSQL database to maintain the stock of beers.
+To write a test for this class, instead of using `docker-compose`, we are going to use Container Object DSL approach.
+
+Test must look like:
+
+[source, java]
+----
+
+----
+
+
+
+
+
+
