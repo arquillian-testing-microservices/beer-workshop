@@ -81,6 +81,6 @@
     <maven.compiler.source>1.8</maven.compiler.source>
     <maven.compiler.target>1.8</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <version.arquillian_universe>1.1.12.0</version.arquillian_universe>
+    <version.arquillian_universe>1.1.13.0</version.arquillian_universe>
   </properties>
 </project>
