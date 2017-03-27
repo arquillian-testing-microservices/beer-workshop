@@ -49,4 +49,11 @@ public class BeerEndpoint {
         return results;
     }
 
+    @GET
+    @Path("/healthcheck")
+    @Produces("text/plain")
+    public Response healthcheck() {
+        return Response.ok("OK").build();
+    }
+
 }
