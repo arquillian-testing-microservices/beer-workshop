@@ -18,6 +18,10 @@ public class BeerWarehouse {
         return this.jedis.decrBy(beerId, numberOfBeers);
     }
 
+    public long remainingStock(String beerId) {
+        return Long.parseLong(this.jedis.get(beerId));
+    }
+
     public void buyBeer(String beerId, long numberOfBeers) {
         final long newStock = decreaseStock(beerId, numberOfBeers);
 
