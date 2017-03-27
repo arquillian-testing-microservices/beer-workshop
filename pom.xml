@@ -13,5 +13,6 @@
     <module>jpa-beer-service-2</module>
     <module>mongodb-beer-service</module>
     <module>mongodb-beer-service-docker</module>
+    <module>mongodb-beer-service-kubernetes</module>
   </modules>
 </project>
