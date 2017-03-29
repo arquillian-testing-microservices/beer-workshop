@@ -70,6 +70,18 @@
             <version>3.0.2</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.arquillian.ape</groupId>
+            <artifactId>arquillian-ape-nosql-mongodb</artifactId>
+            <version>2.0.0-alpha.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.lordofthejars</groupId>
+            <artifactId>nosqlunit-mongodb</artifactId>
+            <version>1.0.0-rc.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <profiles>
         <profile>
@@ -117,4 +129,16 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <version.arquillian_universe>1.1.13.0</version.arquillian_universe>
     </properties>
+
+    <!-- To Remove when synced -->
+    <repositories>
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>bintray-arquillian-Arquillian</id>
+            <name>bintray</name>
+            <url>http://dl.bintray.com/arquillian/Arquillian</url>
+        </repository>
+    </repositories>
 </project>
