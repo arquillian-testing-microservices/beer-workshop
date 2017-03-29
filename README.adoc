@@ -353,6 +353,75 @@ public class BeerWarehouseTest {
 
 IMPORTANT: Arquillian Cube always start everything `docker-compose.yml` definitions (including default locations) + Container Objects at the same time. So you can mix  both approaches.
 
+=== Ingredients Service
 
+Let's run this test using Apache Tomcat.
+To configure it let's use Forge again.
 
+Go to `ingredients-service` and run `forge`:
+
+[source, terminal]
+----
+ingredients-service]$ arquillian-setup --test-framework junit --container-adapter tomcat-managed --container-adapter-version 8.0.42
+----
+
+After that you can exit Forge console, open the IDE and write your test.
+
+First of all let's add REST-Assured dependency:
+
+[source, xml]
+.pom.xml
+----
+<dependency>
+  <groupId>io.rest-assured</groupId>
+  <artifactId>rest-assured</artifactId>
+  <version>3.0.2</version>
+  <scope>test</scope>
+</dependency>
+----
+
+Then the test must looks like:
+
+[source, java]
+.IngredientsServiceTest.java
+----
+@RunWith(Arquillian.class)
+public class IngredientsTest {
+
+    @Deployment(testable = false)
+    public static WebArchive createDeployment() {
+        return ShrinkWrap.create(WebArchive.class, "ingredients.war").addPackages(true, Ingredients.class.getPackage())
+                .addClasses(Ingredient.class)
+                .addAsLibraries(Maven.resolver().loadPomFromFile("pom.xml")
+                .importCompileAndRuntimeDependencies().resolve().withTransitivity().as(JavaArchive.class));
+    }
+
+    @ArquillianResource
+    URL ingredientsService;
+
+    @Test
+    public void should_get_ingredients_by_beer_name() throws URISyntaxException {
+
+        RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder();
+        requestSpecBuilder.setBaseUri(ingredientsService.toURI());
+
+        RestAssured.given()
+                .contentType(ContentType.JSON)
+                .spec(requestSpecBuilder.build())
+                .pathParam("beerName", "Voll Damm")
+                .get("{beerName}")
+                .then()
+                .assertThat()
+                .contentType(ContentType.JSON)
+                .body("$.size()", CoreMatchers.is(4));
+
+    }
+
+}
+----
+
+[IMPORTANT]
+====
+You need to update `arquillian.xml` and create a `tomcat8-server.xml` and `tomcat-users.xml` accordantly to be able to deploy aplication. See them in `ingredients-service/src/test/resources`.
+====
 
