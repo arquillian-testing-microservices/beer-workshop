@@ -1,0 +1,24 @@
+beer:
+  image: lordofthejars/beer-service:1.0.1
+  ports:
+      - "8080:8080"
+  links:
+    - mongodb:database
+  environment:
+    - MONGODB_HOSTNAME=mongodb
+    - MONGODB_PORT=27017
+    - MONGODB_USER=root
+    - MONGODB_PASSWORD=root
+    - MONGODB_DATABASE=beers
+  labels:
+    kompose.service.type: NodePort
+
+mongodb:
+  image: centos/mongodb-32-centos7
+  ports:
+    - "27017:27017"
+  environment:
+    - MONGODB_USER=root
+    - MONGODB_PASSWORD=root
+    - MONGODB_DATABASE=beers
+    - MONGODB_ADMIN_PASSWORD=admin

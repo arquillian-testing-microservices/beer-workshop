@@ -19,7 +19,7 @@ public class BeerWarehouseTest {
                             .build();
 
     @Test
-    public void should_decreaase_stock_when_beer_new_beer() {
+    public void should_decrease_stock_when_buy_new_beer() {
         // Given:
         BeerWarehouse beerWarehouse =
                 new BeerWarehouse(redis.getIpAddress(), redis.getBindPort(6379));
