@@ -1,0 +1,89 @@
+apiVersion: v1
+items:
+- apiVersion: v1
+  kind: Service
+  metadata:
+    annotations:
+      kompose.service.type: NodePort
+    labels:
+      service: beer
+    name: beer
+  spec:
+    ports:
+    - name: "8080"
+      port: 8080
+      targetPort: 8080
+    selector:
+      service: beer
+    type: NodePort
+- apiVersion: v1
+  kind: Service
+  metadata:
+    labels:
+      service: mongodb
+    name: mongodb
+  spec:
+    ports:
+    - name: "27017"
+      port: 27017
+      targetPort: 27017
+    selector:
+      service: mongodb
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    annotations:
+      kompose.service.type: NodePort
+    name: beer
+  spec:
+    replicas: 1
+    template:
+      metadata:
+        labels:
+          service: beer
+      spec:
+        containers:
+        - env:
+          - name: MONGODB_HOSTNAME
+            value: mongodb
+          - name: MONGODB_PORT
+            value: "27017"
+          - name: MONGODB_USER
+            value: root
+          - name: MONGODB_PASSWORD
+            value: root
+          - name: MONGODB_DATABASE
+            value: beer
+          image: lordofthejars/beer-service:1.0.1
+          name: beer
+          ports:
+          - containerPort: 8080
+        restartPolicy: Always
+- apiVersion: extensions/v1beta1
+  kind: Deployment
+  metadata:
+    name: mongodb
+  spec:
+    replicas: 1
+    template:
+      metadata:
+        labels:
+          service: mongodb
+      spec:
+        containers:
+        - env:
+          - name: MONGODB_USER
+            value: root
+          - name: MONGODB_PASSWORD
+            value: root
+          - name: MONGODB_DATABASE
+            value: beer
+          - name: MONGODB_ADMIN_PASSWORD
+            value: admin
+          image: centos/mongodb-32-centos7
+          name: mongodb
+          ports:
+          - containerPort: 27017
+        restartPolicy: Always
+kind: List
+
