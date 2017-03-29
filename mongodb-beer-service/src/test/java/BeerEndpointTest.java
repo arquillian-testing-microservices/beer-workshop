@@ -59,14 +59,14 @@ public class BeerEndpointTest {
                 .get()
                 .then()
                 .assertThat()
-                .body("name", hasItems("Voll Damn"));
+                .body("name", hasItems("Voll Damm"));
 
 
     }
 
     private void createBeer(RequestSpecBuilder requestSpecBuilder) {
         Beer beer = new Beer();
-        beer.setName("Voll Damn");
+        beer.setName("Voll Damm");
         beer.setPrice(1.5);
         beer.setAlcohol(7.2);
 

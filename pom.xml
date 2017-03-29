@@ -14,5 +14,6 @@
     <module>mongodb-beer-service</module>
     <module>mongodb-beer-service-docker</module>
     <module>mongodb-beer-service-kubernetes</module>
+    <module>ingredients-service</module>
   </modules>
 </project>
