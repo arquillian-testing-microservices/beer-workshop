@@ -114,15 +114,4 @@
         <version.arquillian_universe>1.1.13.0</version.arquillian_universe>
     </properties>
 
-    <!-- To Remove when synced -->
-    <repositories>
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>bintray-arquillian-Arquillian</id>
-            <name>bintray</name>
-            <url>http://dl.bintray.com/arquillian/Arquillian</url>
-        </repository>
-    </repositories>
 </project>
