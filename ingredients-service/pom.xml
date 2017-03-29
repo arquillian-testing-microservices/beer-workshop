@@ -6,7 +6,7 @@
         <groupId>org.beer.workshop</groupId>
         <version>1.0.0-SNAPSHOT</version>
     </parent>
-    <artifactId>jingredients-service</artifactId>
+    <artifactId>ingredients-service</artifactId>
   <packaging>war</packaging>
   <version>1.0.0-SNAPSHOT</version>
 

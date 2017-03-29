@@ -35,4 +35,20 @@ public class BeerEndpointTest {
 
     }
 
+    /**private void createBeer(RequestSpecBuilder requestSpecBuilder) {
+        Beer beer = new Beer();
+        beer.setName("Voll Damm");
+        beer.setPrice(1.5);
+        beer.setAlcohol(7.2);
+
+        given()
+                .contentType(ContentType.JSON)
+                .spec(requestSpecBuilder.build())
+                .body(beer)
+                .post()
+                .then()
+                .assertThat()
+                .statusCode(201);
+    }**/
+
 }
