@@ -1,5 +1,7 @@
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
+import org.arquillian.ape.nosql.NoSqlPopulator;
+import org.arquillian.ape.nosql.mongodb.MongoDb;
 import org.beer.workshop.boundary.BeerEndpoint;
 import org.beer.workshop.entity.Beer;
 import org.beer.workshop.tracing.boundary.LoggerProducer;
@@ -10,6 +12,7 @@ import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.JavaArchive;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
 import org.jboss.shrinkwrap.resolver.api.maven.Maven;
+import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -41,15 +44,23 @@ public class BeerEndpointTest {
     @ArquillianResource
     URL serviceUrl;
 
+    @ArquillianResource
+    @MongoDb
+    NoSqlPopulator noSqlPopulator;
+
     @Test
     public void should_find_all_beers() {
 
         // Given:
 
+        noSqlPopulator
+                .forServer("localhost", 27017)
+                .withStorage("test")
+                .usingDataSet("beer.json")
+                .execute();
+
         RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder();
         requestSpecBuilder.setBaseUri(serviceUrl.toExternalForm() + "rest/beers/");
-
-        createBeer(requestSpecBuilder);
 
         // When: Then:
 
@@ -59,25 +70,16 @@ public class BeerEndpointTest {
                 .get()
                 .then()
                 .assertThat()
-                .body("name", hasItems("Voll Damn"));
+                .body("name", hasItems("Voll Damm"));
 
 
     }
 
-    private void createBeer(RequestSpecBuilder requestSpecBuilder) {
-        Beer beer = new Beer();
-        beer.setName("Voll Damn");
-        beer.setPrice(1.5);
-        beer.setAlcohol(7.2);
-
-        given()
-                .contentType(ContentType.JSON)
-                .spec(requestSpecBuilder.build())
-                .body(beer)
-                .post()
-                .then()
-                .assertThat()
-                .statusCode(201);
+    @After
+    public void cleanCollection() {
+        noSqlPopulator.forServer("localhost", 27017)
+                .withStorage("test")
+                .clean();
     }
 
 }

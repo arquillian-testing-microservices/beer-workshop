@@ -266,7 +266,93 @@ To change a bit the logic, currently `MongoDB` database is used instead of JPA w
 
 First thing before executing the test, just start `MongoDB` by calling `${MONGO_HOME}/bin/mongod` using default parameters is ok for given test.
 
-...
+Then let's add APE extension for MongoDB and NoSQLUnit (pending to release under universe):
+
+[source, xml]
+.pom.xml
+----
+<dependency>
+    <groupId>org.arquillian.ape</groupId>
+    <artifactId>arquillian-ape-nosql-mongodb</artifactId>
+    <version>2.0.0-alpha.1</version>
+    </dependency>
+<dependency>
+    <groupId>com.lordofthejars</groupId>
+    <artifactId>nosqlunit-mongodb</artifactId>
+    <version>1.0.0-rc.2</version>
+</dependency>
+----
+
+Then let's use it to populate data before executing the test:
+TEst must look like:
+
+[source, java]
+.BeerEndpointTest.java
+----
+@RunWith(Arquillian.class)
+public class BeerEndpointTest {
+
+    @Deployment(testable = false)
+    public static WebArchive createDeploymentFile() {
+        WebArchive webArchive = ShrinkWrap.create(WebArchive.class, "test.war")
+                .addPackages(true, BeerEndpoint.class.getPackage())
+                .addClasses(Beer.class, LoggerProducer.class)
+                .addAsLibraries(
+                        Maven.resolver()
+                                .loadPomFromFile("pom.xml")
+                                .importCompileAndRuntimeDependencies()
+                                .resolve().withTransitivity()
+                                .as(JavaArchive.class)
+                );
+
+        return webArchive;
+
+    }
+
+    @ArquillianResource
+    URL serviceUrl;
+
+    @ArquillianResource
+    @MongoDb
+    NoSqlPopulator noSqlPopulator;
+
+    @Test
+    public void should_find_all_beers() {
+
+        // Given:
+
+        noSqlPopulator
+                .forServer("localhost", 27017)
+                .withStorage("test")
+                .usingDataSet("beer.json")
+                .execute();
+
+        RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder();
+        requestSpecBuilder.setBaseUri(serviceUrl.toExternalForm() + "rest/beers/");
+
+        // When: Then:
+
+        given()
+                .contentType(ContentType.JSON)
+                .spec(requestSpecBuilder.build())
+                .get()
+                .then()
+                .assertThat()
+                .body("name", hasItems("Voll Damm"));
+
+
+    }
+
+    @After
+    public void cleanCollection() {
+        noSqlPopulator.forServer("localhost", 27017)
+                .withStorage("test")
+                .clean();
+    }
+
+}
+
+----
 
 Finally you can stop `MongoDB`.
 
