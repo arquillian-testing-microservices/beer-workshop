@@ -1,0 +1,12 @@
+= Deploy resources to K8s cluster
+
+* Go to your project's root dir.
+* Run `kubectl create -f mongodb-beer-service-kubernetes/src/test/resources/kubernetes.yaml`
+
+= Steps to get project's endpoints:
+* Run Command:
+
+[source, terminal]
+----
+> curl "`minishift service beer --url` + /beer/rest/beers"
+----
