@@ -174,10 +174,10 @@ First of all let's add REST-Assured library on `pom.xml`:
 </dependency>
 ----
 
-And then modify `jpa-beer-service-2/src/test/java/org/beer/workshop/BeerEndpointTest.java` to look like:
+And then modify `jpa-beer-service-2/src/test/java/org/beer/workshop/org.beer.workshop.BeerEndpointTest.java` to look like:
 
 [source, java]
-.jpa-beer-service-2/src/test/java/org/beer/workshop/org.beer.workshop.BeerEndpointTest.java
+.jpa-beer-service-2/src/test/java/org/beer/workshop/org.beer.workshop.org.beer.workshop.BeerEndpointTest.java
 ----
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
@@ -200,7 +200,7 @@ import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.hasItems;
 
 @RunWith(Arquillian.class)
-public class org.beer.workshop.BeerEndpointTest {
+public class org.beer.workshop.org.beer.workshop.BeerEndpointTest {
 
     @Deployment(testable = false)
     public static WebArchive createDeploymentFile() {
@@ -289,10 +289,10 @@ Then let's use it to populate data before executing the test:
 TEst must look like:
 
 [source, java]
-.BeerEndpointTest.java
+.org.beer.workshop.BeerEndpointTest.java
 ----
 @RunWith(Arquillian.class)
-public class BeerEndpointTest {
+public class org.beer.workshop.BeerEndpointTest {
 
     @Deployment(testable = false)
     public static WebArchive createDeploymentFile() {
@@ -399,10 +399,65 @@ And remove:
 * `Default Maven Profile`
 * Container definition in `arquillian.xml`
 
-Finally open `org.beer.workshop.BeerEndpointTest`, removes `@Deployment` method and enrich test with Docker data.
+Finally open `org.beer.workshop.org.beer.workshop.BeerEndpointTest`, removes `@Deployment` method and enrich test with Docker data.
 Test might look like:
 
-...
+[source, java]
+----
+@RunWith(Arquillian.class)
+public class BeerEndpointTest {
+
+    @DockerUrl(containerName = "beer", exposedPort = 8080, context = "/rest/beers/")
+    @ArquillianResource
+    URL beerService;
+
+    @ArquillianResource
+    @MongoDb
+    NoSqlPopulator noSqlPopulator;
+
+    @HostIp
+    String dockerHost;
+
+    @HostPort(containerName = "mongodb", value = 27017)
+    int mongodbPort ;
+
+    @Test
+    public void should_find_all_beers() {
+
+        // Given:
+
+        noSqlPopulator
+                .forServer(dockerHost, 27017)
+                .withStorage("test")
+                .usingDataSet("beer.json")
+                .execute();
+
+        RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder();
+        requestSpecBuilder.setBaseUri(beerService.toExternalForm() + "rest/beers/");
+
+        // When: Then:
+
+        given()
+                .contentType(ContentType.JSON)
+                .spec(requestSpecBuilder.build())
+                .get()
+                .then()
+                .assertThat()
+                .body("name", hasItems("Voll Damm"));
+
+
+    }
+
+    @After
+    public void cleanCollection() {
+        noSqlPopulator.forServer(dockerHost, 27017)
+                .withStorage("test")
+                .clean();
+    }
+
+}
+
+----
 
 
 Also there is a `BeerWarehouse` class that uses `Redis` key-value NoSQL database to maintain the stock of beers.

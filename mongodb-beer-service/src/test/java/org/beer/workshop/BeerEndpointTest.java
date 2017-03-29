@@ -1,3 +1,5 @@
+package org.beer.workshop;
+
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import org.arquillian.ape.nosql.NoSqlPopulator;
