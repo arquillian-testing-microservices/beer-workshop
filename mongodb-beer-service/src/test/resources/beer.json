@@ -1,0 +1,9 @@
+{
+  "beer": [
+    {
+      "name":"Voll Damm",
+      "price": 1.5,
+      "alcohol":7.2
+    }
+  ]
+}
