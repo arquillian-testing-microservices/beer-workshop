@@ -55,16 +55,10 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.arquillian.ape</groupId>
+            <groupId>org.arquillian.universe</groupId>
             <artifactId>arquillian-ape-nosql-mongodb</artifactId>
-            <version>2.0.0-alpha.1</version>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.lordofthejars</groupId>
-            <artifactId>nosqlunit-mongodb</artifactId>
-            <version>1.0.0-rc.2</version>
-            <scope>test</scope>
+            <type>pom</type>
         </dependency>
     </dependencies>
     <profiles>
@@ -111,7 +105,7 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <version.arquillian_universe>1.1.13.0</version.arquillian_universe>
+        <version.arquillian_universe>1.1.13.1</version.arquillian_universe>
     </properties>
 
 </project>
