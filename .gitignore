@@ -18,6 +18,11 @@
 .idea/**/dynamic.xml
 .idea/**/uiDesigner.xml
 
+# Eclipse
+.settings/
+.project
+.classpath
+
 # Gradle:
 .idea/**/gradle.xml
 .idea/**/libraries
