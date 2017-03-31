@@ -21,7 +21,7 @@ import static org.hamcrest.CoreMatchers.hasItems;
 @RunWith(Arquillian.class)
 public class BeerEndpointTest {
 
-    @DockerUrl(containerName = "beer", exposedPort = 8080, context = "/rest/beers/")
+    @DockerUrl(containerName = "beer", exposedPort = 8080, context = "/beer/rest/beers/")
     @ArquillianResource
     URL beerService;
 
@@ -47,7 +47,7 @@ public class BeerEndpointTest {
                 .execute();
 
         RequestSpecBuilder requestSpecBuilder = new RequestSpecBuilder();
-        requestSpecBuilder.setBaseUri(beerService.toExternalForm() + "rest/beers/");
+        requestSpecBuilder.setBaseUri(beerService.toExternalForm());
 
         // When: Then:
 
