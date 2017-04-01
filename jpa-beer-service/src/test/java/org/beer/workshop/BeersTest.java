@@ -37,7 +37,7 @@ public class BeersTest {
     Beers beers;
 
     @Test
-    public void should_final_all_beers() {
+    public void should_find_all_beers() {
 
         // Given:
 
