@@ -14,7 +14,7 @@
     <properties>
         <springframework.version>4.3.7.RELEASE</springframework.version>
         <jackson.version>2.5.3</jackson.version>
-        <version.arquillian_universe>1.1.13.0</version.arquillian_universe>
+        <version.arquillian_universe>1.1.13.2</version.arquillian_universe>
         <version.junit>4.12</version.junit>
     </properties>
 
@@ -72,7 +72,7 @@
                 <plugins>
                     <plugin>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>2.14.1</version>
+                        <version>2.19.1</version>
                         <configuration>
                             <systemPropertyVariables>
                                 <arquillian.launch>arquillian-tomcat-managed</arquillian.launch>
